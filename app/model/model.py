@@ -1,40 +1,41 @@
 import pickle
-import re
 from pathlib import Path
 
 __version__ = "0.1.0"
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent
 
+with open(f"{BASE_DIR}/model3.pkl", "rb") as f:
+    model_peronality = pickle.load(f)
 
-with open(f"{BASE_DIR}/trained_pipeline-{__version__}.pkl", "rb") as f:
-    model = pickle.load(f)
-
+with open(f"{BASE_DIR}/Final_words.pkl", "rb") as f:
+    Final_words = pickle.load(f)
 
 classes = [
-    "Arabic",
-    "Danish",
-    "Dutch",
-    "English",
-    "French",
-    "German",
-    "Greek",
-    "Hindi",
-    "Italian",
-    "Kannada",
-    "Malayalam",
-    "Portugeese",
-    "Russian",
-    "Spanish",
-    "Sweedish",
-    "Tamil",
-    "Turkish",
+    "ENFJ",
+    "ENFP",
+    "ENTJ",
+    "ENTP",
+    "ESFJ",
+    "ESFP",
+    "ESTJ",
+    "ESTP",
+    "INFJ",
+    "INFP",
+    "INTJ",
+    "INTP",
+    "ISFJ",
+    "ISFP",
+    "ISTJ",
+    "ISTP",
 ]
 
-
-def predict_pipeline(text):
-    text = re.sub(r'[!@#$(),\n"%^*?\:;~`0-9]', " ", text)
-    text = re.sub(r"[[]]", " ", text)
-    text = text.lower()
-    pred = model.predict([text])
-    return classes[pred[0]]
+def predict_personality_pipeline(text):
+    new_features = []
+    for word in Final_words:
+        if word in text.lower():
+            new_features.append(1)
+        else:
+            new_features.append(0)
+    pred = model_peronality.predict([new_features])
+    return classes[int(pred)]
